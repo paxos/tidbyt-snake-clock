@@ -1,3 +1,10 @@
+"""
+Applet: Snake Clock
+Summary: Shows the time and a snake
+Description: Shows the time with a snake slithering around in the background.
+Author: paxos
+"""
+
 load("render.star", "render")
 load("time.star", "time")
 load("random.star", "random")

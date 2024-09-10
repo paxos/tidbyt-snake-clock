@@ -55,7 +55,7 @@ def valid_location(x,y,snake):
 
     return True
 
-def move(snake, counter):
+def move(snake, direction, moves_left):
     head = snake[0]
     x = head["x"]
     y = head["y"]
@@ -77,12 +77,14 @@ def move(snake, counter):
 
     is_valid_move = valid_location(x, y, snake)
     if not is_valid_move:
-        print("No valid location found, trying again")
-        if counter > 10:
-            print("Could not find a valid location after 10 tries, returning")
+        print("No valid location found, trying again. " + str(len(moves_left)) + " moves left.")
+        if len(moves_left) == 0:
+            print("No moves left. Resetting...")
             return default_snake()
         else:
-            return move(snake, counter + 1)
+            direction = moves_left[0]
+            moves_left.remove(direction)
+            return move(snake, direction, moves_left)
     else:
         print("Moving to " + str(x) + ", " + str(y))
 
@@ -120,6 +122,8 @@ def main(config):
     fps = 20
 
     snake_str = cache.get("snake")
+    direction = random.number(0, 3)
+    should_change_direction = random.number(0, 100) < 25
 
     if snake_str == None:
         snake = default_snake()
@@ -129,7 +133,16 @@ def main(config):
     snake_render_elements = []
 
     for i in range(30): # how many frames to render
-        snake = move(snake, 0)
+
+        if should_change_direction:
+            direction = random.number(0, 3)
+        
+        remaining_moves = [0, 1, 2, 3]
+        remaining_moves.remove(direction)
+
+        print("remaining moves: " + str(remaining_moves))
+
+        snake = move(snake, direction, remaining_moves)
         snake = color_snake(snake)
         snake_render_elements.append(
             render.Stack(

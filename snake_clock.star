@@ -90,6 +90,16 @@ def move(snake):
 
     return snake
 
+def snake_to_elements(snake):
+    snake_elements = [
+        render.Padding(
+            pad=(segment["x"], segment["y"], 0, 0),  # x, y
+            child=render.Box(width=1, height=1, color=(segment["color"])),
+        )
+        for i, segment in enumerate(snake)
+    ]
+    return snake_elements
+
 def main(config):
     timezone = config.get("timezone") or "America/New_York"
     now = time.now().in_location(timezone)
@@ -110,25 +120,34 @@ def main(config):
     else:
         snake = json.decode(snake_str)
 
-    snake = move(snake)
-    snake = color_snake(snake)
-    cache.set("snake", json.encode(snake), 300)
+    
+    
+    snake_render_elements = []
 
-    snake_render_elements = [
-        render.Padding(
-            pad=(segment["x"], segment["y"], 0, 0),  # x, y
-            child=render.Box(width=1, height=1, color=(segment["color"])),
+    for i in range(30):
+        snake = move(snake)
+        snake = color_snake(snake)
+        snake_render_elements.append(
+            render.Stack(
+                children = snake_to_elements(snake)
+            )
         )
-        for i, segment in enumerate(snake)
-    ]
+
+    cache.set("snake", json.encode(snake), 300) 
 
     timezone = config.get("timezone") or "America/New_York"
     now = time.now().in_location(timezone)
 
+    #print(snake_render_elements)
+
     return render.Root(
-        delay = 500,
+        delay = 50, # lets assume we refresh every 60 seconds, so we generate 30 frames and show each 2 seconds
         child = render.Stack(
-            children = snake_render_elements
+            children = [
+                render.Animation(
+                    children=snake_render_elements
+                )
+            ]
              + [
                 render.Box(
                     child = render.Padding(

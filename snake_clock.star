@@ -122,10 +122,8 @@ def main(config):
 
     use_24hour = config.bool("24hour", False)
     time_format_colon = "3:04 PM"
-    time_format_blank = "3 04 PM"
     if (use_24hour):
         time_format_colon = "15:04"
-        time_format_blank = "15 04"
 
     random.seed(now.second)  # makes sure things are random every second
 

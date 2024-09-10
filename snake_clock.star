@@ -75,7 +75,7 @@ def move(snake, direction, moves_left):
 
     is_valid_move = valid_location(x, y, snake)
     if not is_valid_move:
-        print("No valid location found, trying again. " + str(len(moves_left)) + " moves left.")
+        # print("No valid location found, trying again. " + str(len(moves_left)) + " moves left.")
         if len(moves_left) == 0:
             print("No moves left. Resetting...")
             return default_snake()
@@ -83,8 +83,6 @@ def move(snake, direction, moves_left):
             direction = moves_left[0]
             moves_left.remove(direction)
             return move(snake, direction, moves_left)
-    else:
-        print("Moving to " + str(x) + ", " + str(y))
 
     new_head = {"x": x, "y": y, "color": "#ff0"}
 
@@ -115,10 +113,6 @@ def main(config):
 
     random.seed(time.now().second) # makes sure things are random every second
 
-    max_width = 64
-    max_height = 32
-    #fps = 20
-
     snake_str = cache.get("snake")
     direction = random.number(0, 3)
 
@@ -137,7 +131,7 @@ def main(config):
         remaining_moves = [0, 1, 2, 3]
         remaining_moves.remove(direction)
 
-        print("remaining moves: " + str(remaining_moves))
+        # print("remaining moves: " + str(remaining_moves))
 
         snake = move(snake, direction, remaining_moves)
         snake = color_snake(snake)
@@ -151,8 +145,6 @@ def main(config):
 
     timezone = config.get("timezone") or "America/New_York"
     now = time.now().in_location(timezone)
-
-    #print(snake_render_elements)
 
     return render.Root(
         delay = 250, # tests show we refresh every 15 seconds, so we do 30 frames

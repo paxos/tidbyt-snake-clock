@@ -4,6 +4,9 @@ load("random.star", "random")
 load("cache.star", "cache")
 load("encoding/json.star", "json")
 
+def color_snake(snake):
+    return snake
+
 def valid_location(x,y,snake):
     if x < 0 or x >= 64 or y < 0 or y >= 32:
         return False
@@ -61,26 +64,17 @@ def main(config):
     fps = 20
 
     snake_str = cache.get("snake")
-    # snake_str = ""
+    #snake_str = None
 
-    if snake_str == "":
-        snake = [
-            {"x": 10, "y": 16, "color": "#f00"},
-            {"x": 11, "y": 16, "color": "#ff0"},
-            {"x": 12, "y": 16, "color": "#ff0"},
-            {"x": 13, "y": 16, "color": "#ff0"},
-            {"x": 14, "y": 16, "color": "#ff0"},
-            {"x": 15, "y": 16, "color": "#ff0"},
-            {"x": 16, "y": 16, "color": "#ff0"},
-            {"x": 17, "y": 16, "color": "#f00"},
-            {"x": 18, "y": 16, "color": "#ff0"},
-            {"x": 19, "y": 16, "color": "#ff0"},
-            {"x": 20, "y": 16, "color": "#ff0"},
-        ]
+    if snake_str == None:
+        snake = []
+        for i in range(10, 30):
+            snake.append({"x": i, "y": 16, "color": "#ff0"})
     else:
         snake = json.decode(snake_str)
 
     snake = move(snake)
+    snake = color_snake(snake)
     cache.set("snake", json.encode(snake), 300)
 
     snake_render_elements = [
@@ -91,9 +85,24 @@ def main(config):
         for i, segment in enumerate(snake)
     ]
 
+    timezone = config.get("timezone") or "America/New_York"
+    now = time.now().in_location(timezone)
+
     return render.Root(
         delay = 500,
         child = render.Stack(
-            children = snake_render_elements
+            children = snake_render_elements + [
+                render.Box(
+                    child = render.Padding(
+                        color = "#181918", # BG Color for time padding
+                        pad = (1, 1, 1, 1),
+                        child = render.Text(
+                            content = now.format("15:04:05"),
+                            font = "tom-thumb",
+                            color = "#fff",
+                        ),
+                    ),
+                )
+            ]
         )
     )

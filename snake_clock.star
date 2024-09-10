@@ -56,7 +56,6 @@ def valid_location(x,y,snake):
     return True
 
 def move(snake, counter):
-    # TODO: break if we cant solve
     head = snake[0]
     x = head["x"]
     y = head["y"]
@@ -121,7 +120,6 @@ def main(config):
     fps = 20
 
     snake_str = cache.get("snake")
-    #snake_str = None
 
     if snake_str == None:
         snake = default_snake()

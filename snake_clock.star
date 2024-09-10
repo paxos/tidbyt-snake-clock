@@ -55,8 +55,8 @@ def valid_location(x,y,snake):
 
     return True
 
-def move(snake):
-
+def move(snake, counter):
+    # TODO: break if we cant solve
     head = snake[0]
     x = head["x"]
     y = head["y"]
@@ -79,7 +79,11 @@ def move(snake):
     is_valid_move = valid_location(x, y, snake)
     if not is_valid_move:
         print("No valid location found, trying again")
-        return move(snake)
+        if counter > 10:
+            print("Could not find a valid location after 10 tries, returning")
+            return default_snake()
+        else:
+            return move(snake, counter + 1)
     else:
         print("Moving to " + str(x) + ", " + str(y))
 
@@ -100,6 +104,12 @@ def snake_to_elements(snake):
     ]
     return snake_elements
 
+def default_snake():
+    snake = []
+    for i in range(10, 30):
+        snake.append({"x": i, "y": 16, "color": "#ff0"})
+    return snake
+
 def main(config):
     timezone = config.get("timezone") or "America/New_York"
     now = time.now().in_location(timezone)
@@ -114,18 +124,14 @@ def main(config):
     #snake_str = None
 
     if snake_str == None:
-        snake = []
-        for i in range(10, 30):
-            snake.append({"x": i, "y": 16, "color": "#ff0"})
+        snake = default_snake()
     else:
         snake = json.decode(snake_str)
 
-    
-    
     snake_render_elements = []
 
     for i in range(30):
-        snake = move(snake)
+        snake = move(snake, 0)
         snake = color_snake(snake)
         snake_render_elements.append(
             render.Stack(
@@ -141,7 +147,7 @@ def main(config):
     #print(snake_render_elements)
 
     return render.Root(
-        delay = 50, # lets assume we refresh every 60 seconds, so we generate 30 frames and show each 2 seconds
+        delay = 2000, # lets assume we refresh every 60 seconds, so we generate 30 frames and show each 2 seconds
         child = render.Stack(
             children = [
                 render.Animation(

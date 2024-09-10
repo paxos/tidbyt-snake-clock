@@ -4,7 +4,37 @@ load("random.star", "random")
 load("cache.star", "cache")
 load("encoding/json.star", "json")
 
+def hex_to_rgb(hex_color):
+    hex_color = hex_color.lstrip('#')
+    return (int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16))
+
+def int_to_hex(value):
+    hex_chars = "0123456789abcdef"
+    return hex_chars[(value >> 4) & 0xF] + hex_chars[value & 0xF]
+
+def rgb_to_hex(rgb_color):
+    return "#" + int_to_hex(rgb_color[0]) + int_to_hex(rgb_color[1]) + int_to_hex(rgb_color[2])
+
+def interpolate_color(color1, color2, factor):
+    rgb1 = hex_to_rgb(color1)
+    rgb2 = hex_to_rgb(color2)
+    interpolated_rgb = (
+        int(rgb1[0] + (rgb2[0] - rgb1[0]) * factor),
+        int(rgb1[1] + (rgb2[1] - rgb1[1]) * factor),
+        int(rgb1[2] + (rgb2[2] - rgb1[2]) * factor)
+    )
+    return rgb_to_hex(interpolated_rgb)
+
+
 def color_snake(snake):
+    head_color = "#ff0000"
+    tail_color = "#000000"
+    
+    length = len(snake)
+    for i, segment in enumerate(snake):
+        factor = i / (length - 1) if length > 1 else 0
+        segment["color"] = interpolate_color(head_color, tail_color, factor)
+    
     return snake
 
 def valid_location(x,y,snake):
@@ -80,7 +110,7 @@ def main(config):
     snake_render_elements = [
         render.Padding(
             pad=(segment["x"], segment["y"], 0, 0),  # x, y
-            child=render.Box(width=1, height=1, color=("#f00" if i == 0 else "#fff")),
+            child=render.Box(width=1, height=1, color=(segment["color"])),
         )
         for i, segment in enumerate(snake)
     ]
@@ -91,11 +121,12 @@ def main(config):
     return render.Root(
         delay = 500,
         child = render.Stack(
-            children = snake_render_elements + [
+            children = snake_render_elements
+             + [
                 render.Box(
                     child = render.Padding(
                         color = "#181918", # BG Color for time padding
-                        pad = (1, 1, 1, 1),
+                        pad = (1, 1, 1, 0),
                         child = render.Text(
                             content = now.format("15:04:05"),
                             font = "tom-thumb",

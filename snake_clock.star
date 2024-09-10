@@ -135,7 +135,7 @@ def main(config):
                         color = "#181918", # BG Color for time padding
                         pad = (1, 1, 1, 0),
                         child = render.Text(
-                            content = now.format("15:04:05"),
+                            content = now.format("15:04"),
                             font = "tom-thumb",
                             color = "#fff",
                         ),

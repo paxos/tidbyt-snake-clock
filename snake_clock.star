@@ -60,8 +60,6 @@ def move(snake, direction, moves_left):
     x = head["x"]
     y = head["y"]
 
-    direction = random.number(0, 3)
-
     if direction == 0:
         # Move right
         x = x + 1
@@ -119,11 +117,10 @@ def main(config):
 
     max_width = 64
     max_height = 32
-    fps = 20
+    #fps = 20
 
     snake_str = cache.get("snake")
     direction = random.number(0, 3)
-    should_change_direction = random.number(0, 100) < 25
 
     if snake_str == None:
         snake = default_snake()
@@ -132,8 +129,8 @@ def main(config):
 
     snake_render_elements = []
 
-    for i in range(30): # how many frames to render
-
+    for i in range(60): # how many frames to render
+        should_change_direction = random.number(0, 100) < 25 # bias to change direction
         if should_change_direction:
             direction = random.number(0, 3)
         
@@ -158,7 +155,7 @@ def main(config):
     #print(snake_render_elements)
 
     return render.Root(
-        delay = 500, # tests show we refresh every 15 seconds, so we do 30 frames
+        delay = 250, # tests show we refresh every 15 seconds, so we do 30 frames
         child = render.Stack(
             children = [
                 render.Animation(

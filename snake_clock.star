@@ -130,7 +130,7 @@ def main(config):
     snake_render_elements = []
 
     for i in range(60): # how many frames to render
-        should_change_direction = random.number(0, 100) < 25 # bias to change direction
+        should_change_direction = random.number(0, 100) < 10 # bias to change direction
         if should_change_direction:
             direction = random.number(0, 3)
         

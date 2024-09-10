@@ -130,7 +130,7 @@ def main(config):
 
     snake_render_elements = []
 
-    for i in range(30):
+    for i in range(30): # how many frames to render
         snake = move(snake, 0)
         snake = color_snake(snake)
         snake_render_elements.append(
@@ -147,7 +147,7 @@ def main(config):
     #print(snake_render_elements)
 
     return render.Root(
-        delay = 2000, # lets assume we refresh every 60 seconds, so we generate 30 frames and show each 2 seconds
+        delay = 500, # tests show we refresh every 15 seconds, so we do 30 frames
         child = render.Stack(
             children = [
                 render.Animation(
